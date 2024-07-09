@@ -57,6 +57,7 @@ import (
 	_ "github.com/xmplusdev/xmcore/transport/internet/kcp"
 	_ "github.com/xmplusdev/xmcore/transport/internet/quic"
 	_ "github.com/xmplusdev/xmcore/transport/internet/reality"
+	_ "github.com/xmplusdev/xmcore/transport/internet/splithttp"
 	_ "github.com/xmplusdev/xmcore/transport/internet/tcp"
 	_ "github.com/xmplusdev/xmcore/transport/internet/tls"
 	_ "github.com/xmplusdev/xmcore/transport/internet/udp"

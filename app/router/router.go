@@ -39,6 +39,7 @@ type Route struct {
 	outboundTag       string
 }
 
+
 func NewRouter() *Router {
 	con := NewConditionChan()
 	con.Add(NewInboundTagMatcher([]string{"asdf"}))
@@ -53,7 +54,7 @@ func NewRouter() *Router {
 	}
 }
 
-func Romvededuplicate(users []string) []string {
+func RemoveDuplicateRule(users []string) []string {
 	sort.Strings(users)
 	j := 0
 	for i := 1; i < len(users); i++ {
@@ -61,39 +62,36 @@ func Romvededuplicate(users []string) []string {
 			continue
 		}
 		j++
-		// preserve the original data
-		// in[i], in[j] = in[j], in[i]
-		// only set what is required
 		users[j] = users[i]
 	}
 	return users[:j+1]
 }
 
-func (r *Router) AddUsers(tag string, emails []string) {
+func (r *Router) AddUserRule(tag string, email []string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if index, ok := r.tag2indexmap[tag]; ok {
 		if conditioncan, ok := r.rules[index].Condition.(*ConditionChan); ok {
 			for _, condition := range *conditioncan {
 				if usermatcher, ok := condition.(*UserMatcher); ok {
-					usermatcher.user = Romvededuplicate(append(usermatcher.user, emails...))
+					usermatcher.user = RemoveDuplicateRule(append(usermatcher.user, email...))
 					break
 				}
 			}
 		} else if usermatcher, ok := r.rules[index].Condition.(*UserMatcher); ok {
-			usermatcher.user = Romvededuplicate(append(usermatcher.user, emails...))
+			usermatcher.user = RemoveDuplicateRule(append(usermatcher.user, email...))
 
 		}
 	} else {
 		tagStartIndex := len(r.rules)
 		r.tag2indexmap[tag] = tagStartIndex
 		r.index2tag[tagStartIndex] = tag
-		r.rules = append(r.rules, &Rule{Condition: NewUserMatcher(emails), Tag: tag})
+		r.rules = append(r.rules, &Rule{Condition: NewUserMatcher(email), Tag: tag})
 	}
 	runtime.GC()
 }
 
-func (r *Router) RemoveUsers(Users []string) {
+func (r *Router) RemoveUserRule(Users []string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	removed_index := make([]int, 0, len(r.rules))
@@ -194,11 +192,10 @@ func (r *Router) Init(ctx context.Context, config *Config, d dns.Client, ohm out
 	r.ctx = ctx
 	r.ohm = ohm
 	r.dispatcher = dispatcher
-	
+
 	r.balancers = make(map[string]*Balancer, len(config.BalancingRule))
 	r.tag2indexmap = map[string]int{}
 	r.index2tag = map[int]string{}
-	
 	for _, rule := range config.BalancingRule {
 		balancer, err := rule.Build(ohm, dispatcher)
 		if err != nil {

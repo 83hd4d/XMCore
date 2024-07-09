@@ -18,9 +18,9 @@ type Router interface {
 	RemoveRule(tag string) error
 	
 	// Add user routing rule
-	AddUsers(tag string, emails []string)
+	AddUserRule(tag string, email []string)
 	// Remove user routing rule
-	RemoveUsers(emails []string)
+	RemoveUserRule(email []string)
 }
 
 // Route is the routing result of Router feature.
@@ -68,10 +68,10 @@ func (DefaultRouter) RemoveRule(tag string) error {
 }
 
 // AddUsers implements Router.
-func (DefaultRouter) AddUsers(tag string, emails []string) {}
+func (DefaultRouter) AddUserRule(tag string, email []string) {}
 
 // RemoveUsers implements Router.
-func (DefaultRouter) RemoveUsers(emails []string)          {}
+func (DefaultRouter) RemoveUserRule(email []string)          {}
 
 // Start implements common.Runnable.
 func (DefaultRouter) Start() error {

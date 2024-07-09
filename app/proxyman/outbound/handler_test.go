@@ -14,6 +14,7 @@ import (
 	"github.com/xmplusdev/xmcore/app/stats"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/common/serial"
+	"github.com/xmplusdev/xmcore/common/session"
 	core "github.com/xmplusdev/xmcore/core"
 	"github.com/xmplusdev/xmcore/features/outbound"
 	"github.com/xmplusdev/xmcore/proxy/freedom"
@@ -44,6 +45,7 @@ func TestOutboundWithoutStatCounter(t *testing.T) {
 	v, _ := core.New(config)
 	v.AddFeature((outbound.Manager)(new(Manager)))
 	ctx := context.WithValue(context.Background(), xrayKey, v)
+	ctx = session.ContextWithOutbounds(ctx, []*session.Outbound{{}})
 	h, _ := NewHandler(ctx, &core.OutboundHandlerConfig{
 		Tag:           "tag",
 		ProxySettings: serial.ToTypedMessage(&freedom.Config{}),
@@ -73,6 +75,7 @@ func TestOutboundWithStatCounter(t *testing.T) {
 	v, _ := core.New(config)
 	v.AddFeature((outbound.Manager)(new(Manager)))
 	ctx := context.WithValue(context.Background(), xrayKey, v)
+	ctx = session.ContextWithOutbounds(ctx, []*session.Outbound{{}})
 	h, _ := NewHandler(ctx, &core.OutboundHandlerConfig{
 		Tag:           "tag",
 		ProxySettings: serial.ToTypedMessage(&freedom.Config{}),

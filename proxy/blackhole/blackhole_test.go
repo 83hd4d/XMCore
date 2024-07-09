@@ -7,13 +7,15 @@ import (
 	"github.com/xmplusdev/xmcore/common"
 	"github.com/xmplusdev/xmcore/common/buf"
 	"github.com/xmplusdev/xmcore/common/serial"
+	"github.com/xmplusdev/xmcore/common/session"
 	"github.com/xmplusdev/xmcore/proxy/blackhole"
 	"github.com/xmplusdev/xmcore/transport"
 	"github.com/xmplusdev/xmcore/transport/pipe"
 )
 
 func TestBlackholeHTTPResponse(t *testing.T) {
-	handler, err := blackhole.New(context.Background(), &blackhole.Config{
+	ctx := session.ContextWithOutbounds(context.Background(), []*session.Outbound{{}})
+	handler, err := blackhole.New(ctx, &blackhole.Config{
 		Response: serial.ToTypedMessage(&blackhole.HTTPResponse{}),
 	})
 	common.Must(err)
@@ -32,7 +34,7 @@ func TestBlackholeHTTPResponse(t *testing.T) {
 		Reader: reader,
 		Writer: writer,
 	}
-	common.Must(handler.Process(context.Background(), &link, nil))
+	common.Must(handler.Process(ctx, &link, nil))
 	common.Must(rerr)
 	if mb.IsEmpty() {
 		t.Error("expect http response, but nothing")
