@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/xmplusdev/xmcore/common/cmdarg"
+	"github.com/xmplusdev/xmcore/common/errors"
 	clog "github.com/xmplusdev/xmcore/common/log"
 	"github.com/xmplusdev/xmcore/common/platform"
 	"github.com/xmplusdev/xmcore/core"
@@ -217,12 +218,12 @@ func startXray() (core.Server, error) {
 
 	c, err := core.LoadConfig(getConfigFormat(), configFiles)
 	if err != nil {
-		return nil, newError("failed to load config files: [", configFiles.String(), "]").Base(err)
+		return nil, errors.New("failed to load config files: [", configFiles.String(), "]").Base(err)
 	}
 
 	server, err := core.New(c)
 	if err != nil {
-		return nil, newError("failed to create server").Base(err)
+		return nil, errors.New("failed to create server").Base(err)
 	}
 
 	return server, nil

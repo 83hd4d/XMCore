@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/common/net/cnc"
 	"github.com/xmplusdev/xmcore/features/routing"
@@ -50,7 +51,7 @@ func Dial(ctx context.Context, v *Instance, dest net.Destination) (net.Conn, err
 
 	dispatcher := v.GetFeature(routing.DispatcherType())
 	if dispatcher == nil {
-		return nil, newError("routing.Dispatcher is not registered in Xray core")
+		return nil, errors.New("routing.Dispatcher is not registered in Xray core")
 	}
 
 	r, err := dispatcher.(routing.Dispatcher).Dispatch(ctx, dest)
@@ -77,7 +78,7 @@ func DialUDP(ctx context.Context, v *Instance) (net.PacketConn, error) {
 
 	dispatcher := v.GetFeature(routing.DispatcherType())
 	if dispatcher == nil {
-		return nil, newError("routing.Dispatcher is not registered in Xray core")
+		return nil, errors.New("routing.Dispatcher is not registered in Xray core")
 	}
 	return udp.DialDispatcher(ctx, dispatcher.(routing.Dispatcher))
 }

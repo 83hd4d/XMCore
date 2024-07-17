@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/xmplusdev/xmcore/common/buf"
+	"github.com/xmplusdev/xmcore/common/errors"
 	xnet "github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/common/net/cnc"
 	"github.com/xmplusdev/xmcore/common/signal/done"
@@ -74,7 +75,7 @@ func (h *MultiHunkReaderWriter) forceFetch() error {
 			return err
 		}
 
-		return newError("failed to fetch hunk from gRPC tunnel").Base(err)
+		return errors.New("failed to fetch hunk from gRPC tunnel").Base(err)
 	}
 
 	h.buf = hunk.Data

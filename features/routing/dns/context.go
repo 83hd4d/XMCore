@@ -3,6 +3,9 @@ package dns
 //go:generate go run github.com/xmplusdev/xmcore/common/errors/errorgen
 
 import (
+	"context"
+
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/features/dns"
 	"github.com/xmplusdev/xmcore/features/routing"
@@ -31,7 +34,7 @@ func (ctx *ResolvableContext) GetTargetIPs() []net.IP {
 			ctx.resolvedIPs = ips
 			return ips
 		}
-		newError("resolve ip for ", domain).Base(err).WriteToLog()
+		errors.LogInfoInner(context.Background(), err, "resolve ip for ", domain)
 	}
 
 	if ips := ctx.Context.GetTargetIPs(); len(ips) != 0 {

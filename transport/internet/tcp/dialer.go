@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
-	"github.com/xmplusdev/xmcore/common/session"
 	"github.com/xmplusdev/xmcore/transport/internet"
 	"github.com/xmplusdev/xmcore/transport/internet/reality"
 	"github.com/xmplusdev/xmcore/transport/internet/stat"
@@ -14,7 +14,7 @@ import (
 
 // Dial dials a new TCP connection to the given destination.
 func Dial(ctx context.Context, dest net.Destination, streamSettings *internet.MemoryStreamConfig) (stat.Connection, error) {
-	newError("dialing TCP to ", dest).WriteToLog(session.ExportIDToError(ctx))
+	errors.LogInfo(ctx, "dialing TCP to ", dest)
 	conn, err := internet.DialSystem(ctx, dest, streamSettings.SocketSettings)
 	if err != nil {
 		return nil, err
@@ -40,11 +40,11 @@ func Dial(ctx context.Context, dest net.Destination, streamSettings *internet.Me
 	if tcpSettings.HeaderSettings != nil {
 		headerConfig, err := tcpSettings.HeaderSettings.GetInstance()
 		if err != nil {
-			return nil, newError("failed to get header settings").Base(err).AtError()
+			return nil, errors.New("failed to get header settings").Base(err).AtError()
 		}
 		auth, err := internet.CreateConnectionAuthenticator(headerConfig)
 		if err != nil {
-			return nil, newError("failed to create header authenticator").Base(err).AtError()
+			return nil, errors.New("failed to create header authenticator").Base(err).AtError()
 		}
 		conn = auth.Client(conn)
 	}

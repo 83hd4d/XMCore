@@ -5,6 +5,7 @@ import (
 
 	"github.com/xmplusdev/xmcore/common/buf"
 	"github.com/xmplusdev/xmcore/common/crypto"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/common/serial"
 )
@@ -37,7 +38,7 @@ func (r *PacketReader) ReadMultiBuffer() (buf.MultiBuffer, error) {
 	}
 
 	if size > buf.Size {
-		return nil, newError("packet size too large: ", size)
+		return nil, errors.New("packet size too large: ", size)
 	}
 
 	b := buf.New()

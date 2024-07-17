@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/transport/internet"
 	"github.com/xmplusdev/xmcore/transport/internet/reality"
@@ -23,7 +24,7 @@ func Dial(ctx context.Context, dest net.Destination, streamSettings *internet.Me
 
 	conn, err := net.DialUnix("unix", nil, addr)
 	if err != nil {
-		return nil, newError("failed to dial unix: ", settings.Path).Base(err).AtWarning()
+		return nil, errors.New("failed to dial unix: ", settings.Path).Base(err).AtWarning()
 	}
 
 	if config := tls.ConfigFromStreamSettings(streamSettings); config != nil {

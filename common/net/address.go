@@ -2,8 +2,11 @@ package net
 
 import (
 	"bytes"
+	"context"
 	"net"
 	"strings"
+
+	"github.com/xmplusdev/xmcore/common/errors"
 )
 
 var (
@@ -112,7 +115,7 @@ func IPAddress(ip []byte) Address {
 		}
 		return addr
 	default:
-		newError("invalid IP format: ", ip).AtError().WriteToLog()
+		errors.LogError(context.Background(), "invalid IP format: ", ip)
 		return nil
 	}
 }

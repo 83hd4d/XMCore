@@ -5,10 +5,10 @@ package router
 import (
 	"context"
 	sync "sync"
-	"runtime"
 	"sort"
-
+	
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/serial"
 	"github.com/xmplusdev/xmcore/core"
 	"github.com/xmplusdev/xmcore/features/dns"
@@ -38,7 +38,6 @@ type Route struct {
 	outboundGroupTags []string
 	outboundTag       string
 }
-
 
 func NewRouter() *Router {
 	con := NewConditionChan()
@@ -88,7 +87,6 @@ func (r *Router) AddUserRule(tag string, email []string) {
 		r.index2tag[tagStartIndex] = tag
 		r.rules = append(r.rules, &Rule{Condition: NewUserMatcher(email), Tag: tag})
 	}
-	runtime.GC()
 }
 
 func (r *Router) RemoveUserRule(Users []string) {
@@ -181,7 +179,6 @@ func (r *Router) RemoveUserRule(Users []string) {
 	r.rules = newRules
 	r.tag2indexmap = newtag2indexmap
 	r.index2tag = newindex2tag
-	runtime.GC()
 	return
 }
 
@@ -220,7 +217,7 @@ func (r *Router) Init(ctx context.Context, config *Config, d dns.Client, ohm out
 		if len(btag) > 0 {
 			brule, found := r.balancers[btag]
 			if !found {
-				return newError("balancer ", btag, " not found")
+				return errors.New("balancer ", btag, " not found")
 			}
 			rr.Balancer = brule
 		}
@@ -253,7 +250,7 @@ func (r *Router) AddRule(config *serial.TypedMessage, shouldAppend bool) error {
 	if c, ok := inst.(*Config); ok {
 		return r.ReloadRules(c, shouldAppend)
 	}
-	return newError("AddRule: config type error")
+	return errors.New("AddRule: config type error")
 }
 
 func (r *Router) ReloadRules(config *Config, shouldAppend bool) error {
@@ -267,7 +264,7 @@ func (r *Router) ReloadRules(config *Config, shouldAppend bool) error {
 	for _, rule := range config.BalancingRule {
 		_, found := r.balancers[rule.Tag]
 		if found {
-			return newError("duplicate balancer tag")
+			return errors.New("duplicate balancer tag")
 		}
 		balancer, err := rule.Build(r.ohm, r.dispatcher)
 		if err != nil {
@@ -279,7 +276,7 @@ func (r *Router) ReloadRules(config *Config, shouldAppend bool) error {
 
 	for _, rule := range config.Rule {
 		if r.RuleExists(rule.GetRuleTag()) {
-			return newError("duplicate ruleTag ", rule.GetRuleTag())
+			return errors.New("duplicate ruleTag ", rule.GetRuleTag())
 		}
 		cond, err := rule.BuildCondition()
 		if err != nil {
@@ -294,7 +291,7 @@ func (r *Router) ReloadRules(config *Config, shouldAppend bool) error {
 		if len(btag) > 0 {
 			brule, found := r.balancers[btag]
 			if !found {
-				return newError("balancer ", btag, " not found")
+				return errors.New("balancer ", btag, " not found")
 			}
 			rr.Balancer = brule
 		}
@@ -330,7 +327,7 @@ func (r *Router) RemoveRule(tag string) error {
 		r.rules = newRules
 		return nil
 	}
-	return newError("empty tag name!")
+	return errors.New("empty tag name!")
 
 }
 func (r *Router) pickRouteInternal(ctx routing.Context) (*Rule, routing.Context, error) {

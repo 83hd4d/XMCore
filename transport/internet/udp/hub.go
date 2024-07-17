@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/xmplusdev/xmcore/common/buf"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/common/protocol/udp"
 	"github.com/xmplusdev/xmcore/transport/internet"
@@ -54,7 +55,7 @@ func ListenUDP(ctx context.Context, address net.Address, port net.Port, streamSe
 	if err != nil {
 		return nil, err
 	}
-	newError("listening UDP on ", address, ":", port).WriteToLog()
+	errors.LogInfo(ctx, "listening UDP on ", address, ":", port)
 	hub.conn = udpConn.(*net.UDPConn)
 	hub.cache = make(chan *udp.Packet, hub.capacity)
 
@@ -89,7 +90,7 @@ func (h *Hub) start() {
 
 		n, noob, _, addr, err := ReadUDPMsg(h.conn, rawBytes, oobBytes)
 		if err != nil {
-			newError("failed to read UDP msg").Base(err).WriteToLog()
+			errors.LogInfoInner(context.Background(), err, "failed to read UDP msg")
 			buffer.Release()
 			break
 		}
@@ -107,9 +108,9 @@ func (h *Hub) start() {
 		if h.recvOrigDest && noob > 0 {
 			payload.Target = RetrieveOriginalDest(oobBytes[:noob])
 			if payload.Target.IsValid() {
-				newError("UDP original destination: ", payload.Target).AtDebug().WriteToLog()
+				errors.LogDebug(context.Background(), "UDP original destination: ", payload.Target)
 			} else {
-				newError("failed to read UDP original destination").WriteToLog()
+				errors.LogInfo(context.Background(), "failed to read UDP original destination")
 			}
 		}
 

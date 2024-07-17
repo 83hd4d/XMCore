@@ -5,6 +5,7 @@ import (
 
 	"github.com/xmplusdev/xmcore/app/observatory"
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/core"
 	"github.com/xmplusdev/xmcore/features/extension"
 )
@@ -32,7 +33,7 @@ func (l *LeastPingStrategy) PickOutbound(strings []string) string {
 
 	observeReport, err := l.observatory.GetObservation(l.ctx)
 	if err != nil {
-		newError("cannot get observe report").Base(err).WriteToLog()
+		errors.LogInfoInner(l.ctx, err, "cannot get observe report")
 		return ""
 	}
 	outboundsList := outboundList(strings)

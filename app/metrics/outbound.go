@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/common/net/cnc"
 	"github.com/xmplusdev/xmcore/common/signal/done"
@@ -31,7 +32,7 @@ func (l *OutboundListener) add(conn net.Conn) {
 func (l *OutboundListener) Accept() (net.Conn, error) {
 	select {
 	case <-l.done.Wait():
-		return nil, newError("listen closed")
+		return nil, errors.New("listen closed")
 	case c := <-l.buffer:
 		return c, nil
 	}

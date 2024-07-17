@@ -2,15 +2,17 @@ package burst
 
 import (
 	"context"
-	
-	"github.com/xmplusdev/xmcore/core"
+
+	"sync"
+
 	"github.com/xmplusdev/xmcore/app/observatory"
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/signal/done"
+	"github.com/xmplusdev/xmcore/core"
 	"github.com/xmplusdev/xmcore/features/extension"
 	"github.com/xmplusdev/xmcore/features/outbound"
 	"google.golang.org/protobuf/proto"
-	"sync"
 )
 
 type Observer struct {
@@ -66,7 +68,7 @@ func (o *Observer) Start() error {
 			hs, ok := o.ohm.(outbound.HandlerSelector)
 			if !ok {
 
-				return nil, newError("outbound.Manager is not a HandlerSelector")
+				return nil, errors.New("outbound.Manager is not a HandlerSelector")
 			}
 
 			outbounds := hs.Select(o.config.SubjectSelector)
@@ -90,7 +92,7 @@ func New(ctx context.Context, config *Config) (*Observer, error) {
 		outboundManager = om
 	})
 	if err != nil {
-		return nil, newError("Cannot get depended features").Base(err)
+		return nil, errors.New("Cannot get depended features").Base(err)
 	}
 	hp := NewHealthPing(ctx, config.PingConfig)
 	return &Observer{

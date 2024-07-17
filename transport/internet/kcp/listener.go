@@ -8,6 +8,7 @@ import (
 
 	"github.com/xmplusdev/xmcore/common"
 	"github.com/xmplusdev/xmcore/common/buf"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/transport/internet"
 	"github.com/xmplusdev/xmcore/transport/internet/stat"
@@ -38,11 +39,11 @@ func NewListener(ctx context.Context, address net.Address, port net.Port, stream
 	kcpSettings := streamSettings.ProtocolSettings.(*Config)
 	header, err := kcpSettings.GetPackerHeader()
 	if err != nil {
-		return nil, newError("failed to create packet header").Base(err).AtError()
+		return nil, errors.New("failed to create packet header").Base(err).AtError()
 	}
 	security, err := kcpSettings.GetSecurity()
 	if err != nil {
-		return nil, newError("failed to create security").Base(err).AtError()
+		return nil, errors.New("failed to create security").Base(err).AtError()
 	}
 	l := &Listener{
 		header:   header,
@@ -67,7 +68,7 @@ func NewListener(ctx context.Context, address net.Address, port net.Port, stream
 	l.Lock()
 	l.hub = hub
 	l.Unlock()
-	newError("listening on ", address, ":", port).WriteToLog()
+	errors.LogInfo(ctx, "listening on ", address, ":", port)
 
 	go l.handlePackets()
 
@@ -86,7 +87,7 @@ func (l *Listener) OnReceive(payload *buf.Buffer, src net.Destination) {
 	payload.Release()
 
 	if len(segments) == 0 {
-		newError("discarding invalid payload from ", src).WriteToLog()
+		errors.LogInfo(context.Background(), "discarding invalid payload from ", src)
 		return
 	}
 

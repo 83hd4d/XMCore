@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/xmplusdev/xmcore/common/buf"
+	"github.com/xmplusdev/xmcore/common/errors"
 	xnet "github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/common/net/cnc"
 	"github.com/xmplusdev/xmcore/common/signal/done"
@@ -79,7 +80,7 @@ func (h *HunkReaderWriter) forceFetch() error {
 			return err
 		}
 
-		return newError("failed to fetch hunk from gRPC tunnel").Base(err)
+		return errors.New("failed to fetch hunk from gRPC tunnel").Base(err)
 	}
 
 	h.buf = hunk.Data
@@ -135,7 +136,7 @@ func (h *HunkReaderWriter) Write(buf []byte) (int, error) {
 
 	err := h.hc.Send(&Hunk{Data: buf[:]})
 	if err != nil {
-		return 0, newError("failed to send data over gRPC tunnel").Base(err)
+		return 0, errors.New("failed to send data over gRPC tunnel").Base(err)
 	}
 	return len(buf), nil
 }

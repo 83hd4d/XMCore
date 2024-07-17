@@ -10,6 +10,7 @@ import (
 	routerservice "github.com/xmplusdev/xmcore/app/router/command"
 	statsservice "github.com/xmplusdev/xmcore/app/stats/command"
 	ruleservice "github.com/xmplusdev/xmcore/app/router/command"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/serial"
 )
 
@@ -21,7 +22,7 @@ type APIConfig struct {
 
 func (c *APIConfig) Build() (*commander.Config, error) {
 	if c.Tag == "" {
-		return nil, newError("API tag can't be empty.")
+		return nil, errors.New("API tag can't be empty.")
 	}
 
 	services := make([]*serial.TypedMessage, 0, 16)
@@ -40,7 +41,7 @@ func (c *APIConfig) Build() (*commander.Config, error) {
 		case "routingservice":
 			services = append(services, serial.ToTypedMessage(&routerservice.Config{}))
 		case "ruleservice":
-			services = append(services, serial.ToTypedMessage(&ruleservice.Config{}))	
+			services = append(services, serial.ToTypedMessage(&ruleservice.Config{}))		
 		}
 	}
 

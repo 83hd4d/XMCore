@@ -1,10 +1,12 @@
 package json
 
 import (
+	"context"
 	"io"
 
 	"github.com/xmplusdev/xmcore/common"
 	"github.com/xmplusdev/xmcore/common/cmdarg"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/core"
 	"github.com/xmplusdev/xmcore/infra/conf"
 	"github.com/xmplusdev/xmcore/infra/conf/serial"
@@ -20,14 +22,14 @@ func init() {
 			case cmdarg.Arg:
 				cf := &conf.Config{}
 				for i, arg := range v {
-					newError("Reading config: ", arg).AtInfo().WriteToLog()
+					errors.LogInfo(context.Background(), "Reading config: ", arg)
 					r, err := confloader.LoadConfig(arg)
 					if err != nil {
-						return nil, newError("failed to read config: ", arg).Base(err)
+						return nil, errors.New("failed to read config: ", arg).Base(err)
 					}
 					c, err := serial.DecodeJSONConfig(r)
 					if err != nil {
-						return nil, newError("failed to decode config: ", arg).Base(err)
+						return nil, errors.New("failed to decode config: ", arg).Base(err)
 					}
 					if i == 0 {
 						// This ensure even if the muti-json parser do not support a setting,
@@ -41,7 +43,7 @@ func init() {
 			case io.Reader:
 				return serial.LoadJSONConfig(v)
 			default:
-				return nil, newError("unknow type")
+				return nil, errors.New("unknown type")
 			}
 		},
 	}))

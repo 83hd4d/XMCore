@@ -1,6 +1,11 @@
 package features
 
-import "github.com/xmplusdev/xmcore/common"
+import (
+	"context"
+
+	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
+)
 
 //go:generate go run github.com/xmplusdev/xmcore/common/errors/errorgen
 
@@ -13,5 +18,5 @@ type Feature interface {
 
 // PrintDeprecatedFeatureWarning prints a warning for deprecated feature.
 func PrintDeprecatedFeatureWarning(feature string) {
-	newError("You are using a deprecated feature: " + feature + ". Please update your config file with latest configuration format, or update your client software.").WriteToLog()
+	errors.LogInfo(context.Background(), "You are using a deprecated feature: " + feature + ". Please update your config file with latest configuration format, or update your client software.")
 }

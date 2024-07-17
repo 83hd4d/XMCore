@@ -2,6 +2,7 @@ package domainsocket
 
 import (
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/transport/internet"
 )
@@ -14,7 +15,7 @@ const (
 func (c *Config) GetUnixAddr() (*net.UnixAddr, error) {
 	path := c.Path
 	if path == "" {
-		return nil, newError("empty domain socket path")
+		return nil, errors.New("empty domain socket path")
 	}
 	if c.Abstract && path[0] != '@' {
 		path = "@" + path

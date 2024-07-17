@@ -9,7 +9,6 @@ import (
 	"github.com/xmplusdev/xmcore/common/buf"
 	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
-	"github.com/xmplusdev/xmcore/common/session"
 	"github.com/xmplusdev/xmcore/features/routing"
 	"github.com/xmplusdev/xmcore/transport"
 )
@@ -47,5 +46,5 @@ func (d *Dispatcher) NewPacketConnection(ctx context.Context, conn N.PacketConn,
 }
 
 func (d *Dispatcher) NewError(ctx context.Context, err error) {
-	d.newErrorFunc(err).WriteToLog(session.ExportIDToError(ctx))
+	errors.LogInfo(ctx, err.Error())
 }

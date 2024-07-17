@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/proxy/dns"
 	"google.golang.org/protobuf/proto"
@@ -30,7 +31,7 @@ func (c *DNSOutboundConfig) Build() (proto.Message, error) {
 		c.NonIPQuery = "drop"
 	case "drop", "skip":
 	default:
-		return nil, newError(`unknown "nonIPQuery": `, c.NonIPQuery)
+		return nil, errors.New(`unknown "nonIPQuery": `, c.NonIPQuery)
 	}
 	config.Non_IPQuery = c.NonIPQuery
 	return config, nil

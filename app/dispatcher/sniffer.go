@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/common/protocol/bittorrent"
 	"github.com/xmplusdev/xmcore/common/protocol/http"
@@ -52,7 +53,7 @@ func NewSniffer(ctx context.Context) *Sniffer {
 	return ret
 }
 
-var errUnknownContent = newError("unknown content")
+var errUnknownContent = errors.New("unknown content")
 
 func (s *Sniffer) Sniff(c context.Context, payload []byte, network net.Network) (SniffResult, error) {
 	var pendingSniffer []protocolSnifferWithMetadata

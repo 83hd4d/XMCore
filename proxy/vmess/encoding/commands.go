@@ -6,6 +6,7 @@ import (
 
 	"github.com/xmplusdev/xmcore/common"
 	"github.com/xmplusdev/xmcore/common/buf"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/common/protocol"
 	"github.com/xmplusdev/xmcore/common/serial"
@@ -13,11 +14,11 @@ import (
 )
 
 var (
-	ErrCommandTooLarge     = newError("Command too large.")
-	ErrCommandTypeMismatch = newError("Command type mismatch.")
-	ErrInvalidAuth         = newError("Invalid auth.")
-	ErrInsufficientLength  = newError("Insufficient length.")
-	ErrUnknownCommand      = newError("Unknown command.")
+	ErrCommandTooLarge     = errors.New("Command too large.")
+	ErrCommandTypeMismatch = errors.New("Command type mismatch.")
+	ErrInvalidAuth         = errors.New("Invalid auth.")
+	ErrInsufficientLength  = errors.New("Insufficient length.")
+	ErrUnknownCommand      = errors.New("Unknown command.")
 )
 
 func MarshalCommand(command interface{}, writer io.Writer) error {

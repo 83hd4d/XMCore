@@ -7,6 +7,7 @@ import (
 
 	"github.com/xmplusdev/xmcore/app/log"
 	"github.com/xmplusdev/xmcore/common"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/core"
 	grpc "google.golang.org/grpc"
 )
@@ -19,13 +20,13 @@ type LoggerServer struct {
 func (s *LoggerServer) RestartLogger(ctx context.Context, request *RestartLoggerRequest) (*RestartLoggerResponse, error) {
 	logger := s.V.GetFeature((*log.Instance)(nil))
 	if logger == nil {
-		return nil, newError("unable to get logger instance")
+		return nil, errors.New("unable to get logger instance")
 	}
 	if err := logger.Close(); err != nil {
-		return nil, newError("failed to close logger").Base(err)
+		return nil, errors.New("failed to close logger").Base(err)
 	}
 	if err := logger.Start(); err != nil {
-		return nil, newError("failed to start logger").Base(err)
+		return nil, errors.New("failed to start logger").Base(err)
 	}
 	return &RestartLoggerResponse{}, nil
 }

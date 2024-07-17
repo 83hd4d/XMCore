@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/xmplusdev/xmcore/common/dice"
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/protocol"
 	"github.com/xmplusdev/xmcore/proxy/vmess/aead"
 )
@@ -104,6 +105,6 @@ func (v *TimedUserValidator) GetBehaviorSeed() uint64 {
 	return v.behaviorSeed
 }
 
-var ErrNotFound = newError("Not Found")
+var ErrNotFound = errors.New("Not Found")
 
-var ErrTainted = newError("ErrTainted")
+var ErrTainted = errors.New("ErrTainted")

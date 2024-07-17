@@ -2,7 +2,6 @@ package wireguard
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"net/netip"
@@ -12,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/xmplusdev/xmcore/common/errors"
 	"github.com/xmplusdev/xmcore/common/log"
 	xnet "github.com/xmplusdev/xmcore/common/net"
 	"github.com/xmplusdev/xmcore/proxy/wireguard/gvisortun"
@@ -158,7 +158,7 @@ func createGVisorTun(localAddresses []netip.Addr, mtu int, handler promiscuousMo
 				// Perform a TCP three-way handshake.
 				ep, err := r.CreateEndpoint(&wq)
 				if err != nil {
-					newError(err.String()).AtError().WriteToLog()
+					errors.LogError(context.Background(), err.String())
 					r.Complete(true)
 					return
 				}
@@ -183,7 +183,7 @@ func createGVisorTun(localAddresses []netip.Addr, mtu int, handler promiscuousMo
 
 				ep, err := r.CreateEndpoint(&wq)
 				if err != nil {
-					newError(err.String()).AtError().WriteToLog()
+					errors.LogError(context.Background(), err.String())
 					return
 				}
 				defer ep.Close()
