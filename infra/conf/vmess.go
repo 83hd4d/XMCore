@@ -104,13 +104,7 @@ func (c *VMessInboundConfig) Build() (proto.Message, error) {
 			return nil, errors.New("invalid VMess user").Base(err)
 		}
 
-		x := account.ID
-		if x == "" {
-			accid := strings.Split(user.Email, "|")
-			x = accid[2]
-		}
-			
-		u, err := uuid.ParseString(x)
+		u, err := uuid.ParseString(account.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -162,7 +156,13 @@ func (c *VMessOutboundConfig) Build() (proto.Message, error) {
 				return nil, errors.New("invalid VMess user").Base(err)
 			}
 
-			u, err := uuid.ParseString(account.ID)
+			x := account.ID
+			if x == "" {
+				accid := strings.Split(user.Email, "|")
+				x = accid[2]
+			}
+				
+			u, err := uuid.ParseString(x)
 			if err != nil {
 				return nil, err
 			}
